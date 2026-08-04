@@ -92,10 +92,6 @@ test('TS-LOGIN-006', async ({ page }, testInfo) => {
   // Verifikasi Tetap di Halaman Login
   // ==========================
 
-  await page.waitForURL('**/admin/dashboard');
-
-  await expect(page).toHaveURL(/\/admin\/dashboard$/);
-  
   await expect(page).toHaveURL('http://localhost:3000/admin');
 
   await Evidence.screenshot(page, testInfo, '04-still-on-login-page');
