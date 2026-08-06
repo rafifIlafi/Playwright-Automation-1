@@ -1,0 +1,14 @@
+name: Hello CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Greeting
+        run: echo "Hello GitHub Actions!"
