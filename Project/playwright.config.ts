@@ -35,7 +35,10 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   
   /* HTML Report */
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    ['list']
+  ],
 
   /* Shared settings */
 use: {
@@ -43,7 +46,7 @@ use: {
   baseURL: 'http://localhost:3000',
 
   /* Browser normal */
-  headless: false,
+  headless: process.env.CI ? true : false,
 
   /* Screenshot setiap test */
   screenshot: 'on',
@@ -52,7 +55,7 @@ use: {
   video: 'on',
 
   /* Trace setiap test */
-  trace: 'off',
+  trace: 'retain-on-failure',
 
   /* Ignore HTTPS */
   ignoreHTTPSErrors: true,
@@ -96,6 +99,8 @@ use: {
    webServer: {
      command: 'npm run dev',
      url: 'http://localhost:3000',
+
+     cwd: '..',
      reuseExistingServer: !process.env.CI,
    },
 });
