@@ -1,0 +1,293 @@
+# Website Sekolah SMK PGRI Wonoasri v2.1
+
+Website profil sekolah modern yang dibangun dengan Next.js 16, TypeScript, Tailwind CSS, Prisma ORM, dan SQLite database.
+
+## Fitur Utama
+
+### Frontend (User Side)
+- ✅ Hero section fullscreen dengan slogan sekolah
+- ✅ Navbar transparan yang berubah saat scroll
+- ✅ Smooth scrolling
+- ✅ Section Profil Sekolah
+- ✅ Visi dan Misi
+- ✅ Program Keahlian (6 jurusan)
+- ✅ Fasilitas Sekolah
+- ✅ Berita Terbaru (dinamis dari database)
+- ✅ Galeri Kegiatan (dinamis dari database)
+- ✅ Kontak dan Google Maps embed
+- ✅ Footer lengkap dengan sosial media
+- ✅ Responsive mobile-friendly
+- ✅ Animasi ringan (fade-in, hover effects, glassmorphism)
+
+### Backend (Admin Panel)
+- ✅ Login & Logout menggunakan session
+- ✅ Password menggunakan bcrypt hashing
+- ✅ Dashboard admin modern dengan analytics
+- ✅ **Analytics Dashboard** (Visitor tracking, User activity, Click analytics)
+- ✅ CRUD Berita (judul, isi, upload gambar, tanggal otomatis)
+- ✅ CRUD Galeri (judul, upload gambar, hapus)
+- ✅ **CRUD Dokumen Kegiatan** (juklak, juknis, PDF upload)
+- ✅ Validasi upload file (maks 2MB untuk gambar, 5MB untuk PDF)
+- ✅ Proteksi halaman admin
+
+## Teknologi
+
+- **Framework**: Next.js 16 dengan App Router
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4
+- **UI Components**: shadcn/ui
+- **Database**: SQLite dengan Prisma ORM
+- **Authentication**: Session-based dengan bcryptjs
+- **Icons**: Lucide React
+- **Runtime**: Bun
+
+## Struktur Database
+
+### users
+- id (String, primary key)
+- username (String, unique)
+- password (String, hashed with bcrypt)
+- role (String, default: "admin")
+- created_at (DateTime)
+- updated_at (DateTime)
+- Relasi dengan UserLog
+
+### berita
+- id (String, primary key)
+- judul (String)
+- isi (String)
+- gambar (String, optional)
+- created_at (DateTime)
+- updated_at (DateTime)
+
+### galeri
+- id (String, primary key)
+- judul (String)
+- gambar (String)
+- created_at (DateTime)
+- updated_at (DateTime)
+
+### program_content
+- Data 6 program keahlian (DKV, TKJ, KC, BDP, AK, MPLB)
+- Termasuk visi, misi, kompetensi, dll
+
+### dokumen_kegiatan
+- id (String, primary key)
+- judul_kegiatan (String)
+- deskripsi (String)
+- file_juklak (String, optional - PDF)
+- file_juknis (String, optional - PDF)
+- status (Boolean, default: false)
+- created_at (DateTime)
+- updated_at (DateTime)
+
+### visitor_log
+- id (String, primary key)
+- ip (String, optional)
+- user_agent (String, optional)
+- visited_at (DateTime)
+
+### user_log
+- id (String, primary key)
+- user_id (String, foreign key ke User)
+- action (String)
+- details (String, optional)
+- created_at (DateTime)
+- Relasi dengan User
+
+### click_analytics
+- id (String, primary key)
+- user_id (String, optional)
+- content_type (String)
+- content_name (String)
+- content_id (String, optional)
+- clicked_at (DateTime)
+
+### setting
+- id (String, primary key)
+- key (String, unique)
+- value (String)
+- created_at (DateTime)
+- updated_at (DateTime)
+
+## Instalasi & Menjalankan
+
+### Prerequisites
+- Node.js 18+ 
+- Bun (recommended) atau npm
+- Git
+
+### Setup Database SQLite
+
+SQLite sudah built-in dengan project ini, tidak perlu instalasi database server terpisah. Database file akan otomatis dibuat di folder `db/`.
+
+Contoh `.env`:
+```env
+DATABASE_URL="file:./dev.db"
+```
+
+### Langkah-langkah
+
+1. **Clone repository**
+```bash
+git clone https://github.com/riskyoke22/website-smkpgriv2.1.git
+cd website-smkpgriv2.1
+```
+
+2. **Install dependencies**
+```bash
+bun install
+```
+
+3. **Setup environment**
+```bash
+cp .env.example .env
+```
+
+4. **Setup database**
+```bash
+# Push schema ke database SQLite
+bun run db:push
+
+# Seed database dengan admin user dan sample data
+bun run seed
+```
+
+5. **Jalankan development server**
+```bash
+bun run dev
+```
+
+6. **Buka browser**
+```
+http://localhost:3000
+```
+
+### Login Admin
+
+- **URL**: http://localhost:3000/admin
+- **Username**: `admin` atau `cleo`
+- **Password**: `admin123` atau `cleo123`
+
+## Struktur Folder
+
+```
+/
+├── prisma/
+│   ├── schema.prisma       # Schema database SQLite
+│   ├── seed.ts             # Seed script
+│   ├── seed-program-contents.ts    # Program content seed
+│   └── seed-settings.ts    # Settings seed
+├── public/
+│   └── uploads/            # Folder upload file
+│       ├── berita/
+│       ├── galeri/
+│       └── dokumen/         # Upload dokumen kegiatan (PDF)
+├── scripts/
+│   └── setup-sqlite.sh     # SQLite setup script (optional)
+├── src/
+│   ├── app/
+│   │   ├── admin/          # Halaman admin
+│   │   │   ├── dashboard/
+│   │   │   ├── analytics/    # Analytics dashboard
+│   │   │   ├── berita/
+│   │   │   ├── galeri/
+│   │   │   └── dokumen-kegiatan/  # Manajemen dokumen
+│   │   ├── api/            # API Routes
+│   │   │   ├── auth/       # Authentication
+│   │   │   ├── berita/     # Berita CRUD
+│   │   │   ├── galeri/     # Galeri CRUD
+│   │   │   ├── dokumen-kegiatan/  # Dokumen CRUD
+│   │   │   ├── visitor/    # Visitor tracking
+│   │   │   ├── user-logs/  # User activity logs
+│   │   │   ├── track-click/ # Click analytics
+│   │   │   └── upload/     # File upload (images & PDF)
+│   │   └── page.tsx        # Landing page
+│   ├── components/
+│   │   └── ui/             # shadcn/ui components
+│   └── lib/
+│       └── db.ts           # Prisma client
+├── package.json
+└── SQLITE_SETUP.md         # SQLite setup guide
+```
+
+## API Routes
+
+### Authentication
+- `POST /api/auth/login` - Login admin
+- `POST /api/auth/logout` - Logout admin
+- `GET /api/auth/me` - Get current user
+
+### Berita
+- `GET /api/berita` - Get all berita
+- `POST /api/berita` - Create new berita
+- `GET /api/berita/[id]` - Get single berita
+- `PUT /api/berita/[id]` - Update berita
+- `DELETE /api/berita/[id]` - Delete berita
+
+### Galeri
+- `GET /api/galeri` - Get all galeri items
+- `POST /api/galeri` - Create new galeri item
+- `DELETE /api/galeri/[id]` - Delete galeri item
+
+### Dokumen Kegiatan
+- `GET /api/dokumen-kegiatan` - Get all dokumen kegiatan
+- `GET /api/dokumen-kegiatan?active=true` - Get active dokumen kegiatan
+- `POST /api/dokumen-kegiatan` - Create new dokumen kegiatan
+- `GET /api/dokumen-kegiatan/[id]` - Get single dokumen kegiatan
+- `PUT /api/dokumen-kegiatan/[id]` - Update dokumen kegiatan
+- `DELETE /api/dokumen-kegiatan/[id]` - Delete dokumen kegiatan
+
+### Analytics & Tracking
+- `POST /api/visitor` - Log visitor visit
+- `GET /api/visitor` - Get visitor statistics
+- `GET /api/user-logs/stats` - Get user activity statistics (admin only)
+- `POST /api/track-click` - Track click events
+- `GET /api/track-click` - Get click analytics (admin only)
+
+### Upload
+- `POST /api/upload` - Upload image or PDF file
+  - Images: JPG, PNG, WEBP (max 2MB)
+  - PDF: max 5MB for documents
+
+## Deployment
+
+### Deployment ke Vercel (Recommended)
+
+1. Push code ke GitHub
+2. Import project ke Vercel
+3. Configure environment variables
+4. Deploy
+
+### Manual Deployment
+
+```bash
+# Build project
+bun run build
+
+# Start production server
+bun start
+```
+
+## Kontribusi
+
+1. Fork project
+2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buka Pull Request
+
+## Lisensi
+
+This project is licensed under the MIT License.
+
+## Kontak
+
+- **Nama**: SMK PGRI Wonoasri
+- **Address**: Wonoasri, Madiun, Jawa Timur
+- **Repository**: https://github.com/riskyoke22/website-smkpgriv2.1
+
+---
+
+Dibuat dengan ❤️ untuk SMK PGRI Wonoasri
+Version 2.1 - SQLite Database

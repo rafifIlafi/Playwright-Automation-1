@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userLogs  UserLog[]
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProgramContent {
+  id          String   @id @default(cuid())
+  programCode String   @unique
+  title       String
+  description String
+  vision      String
+  goals       String
+  competencies String
+  subjects    String
+  jobs        String
+  majors      String
+  partners    String
+  facilities  String
+  achievements String
+  certifications String
+  gallery     String
+  testimonials String
+  gallery_1   String?
+  gallery_2   String?
+  gallery_3   String?
+  gallery_4   String?
+  gallery_5   String?
+  gallery_6   String?
+  gallery_7   String?
+  gallery_8   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VisitorLog {
+  id        String   @id @default(cuid())
+  ip        String?
+  userAgent String?
+  visitedAt DateTime @default(now())
+}
+
+model UserLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Berita {
+  id        String   @id @default(cuid())
+  judul     String
+  isi       String
+  gambar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Galeri {
+  id        String   @id @default(cuid())
+  judul     String
+  gambar    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DokumenKegiatan {
+  id          String   @id @default(cuid())
+  judulKegiatan String
+  deskripsi   String
+  fileJuklak  String?
+  fileJuknis  String?
+  status      Boolean  @default(false) // true = aktif, false = nonaktif
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ClickAnalytics {
+  id          String   @id @default(cuid())
+  userId      String?
+  contentType String
+  contentName String
+  contentId   String?
+  clickedAt   DateTime @default(now())
+}
