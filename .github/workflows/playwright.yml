@@ -2,24 +2,21 @@ name: Playwright CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  test:
+  playwright:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Show Current Directory
-        run: |
-          pwd
-          ls -la
-          find . -name package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,18 +25,13 @@ jobs:
           cache: npm
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Test Next.js Server
-        run: |
-          pwd
-          npm run dev
-
       - name: Run Playwright Tests
-        run: npx playwright test
+        run: npm test
 
       - name: Upload Playwright Report
         if: always()
@@ -47,3 +39,12 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+          if-no-files-found: warn
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results/
+          path: test-results/
+          if-no-files-found: warn
