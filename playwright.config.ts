@@ -1,70 +1,68 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
- * See https://playwright.dev/docs/test-configuration
- */
 export default defineConfig({
+  // Folder test
   testDir: './Project/test',
 
-  /* Maximum time one test can run */
+  // Timeout tiap test
   timeout: 30 * 1000,
 
-  /* Timeout for assertions */
+  // Timeout assertion
   expect: {
     timeout: 10 * 1000,
   },
 
-  /* Run test in parallel */
+  // Jalankan test secara parallel
   fullyParallel: true,
 
-  /* Prevent accidentally committing test.only */
+  // Cegah test.only ketika CI
   forbidOnly: !!process.env.CI,
 
-  /* Retry on CI */
+  // Retry ketika CI
   retries: process.env.CI ? 2 : 0,
 
-  /* Limit workers on CI */
+  // Worker
   workers: process.env.CI ? 1 : undefined,
-  
-  /* HTML Report */
-  reporter:'html',
 
-  /* Shared settings */
-use: {
-  /* Base URL */
-  baseURL: 'http://localhost:3000',
+  // Report
+  reporter: [
+    ['html', { open: 'never' }],
+    ['list']
+  ],
 
-  /* Browser normal */
-  headless: process.env.CI ? true : false,
+  use: {
+    // URL aplikasi
+    baseURL: 'http://localhost:3000',
 
-  /* Screenshot setiap test */
-  screenshot: 'on',
+    // Headless saat CI
+    headless: !!process.env.CI,
 
-  /* Video setiap test */
-  video: 'on',
+    // Screenshot jika gagal
+    screenshot: 'only-on-failure',
 
-  /* Trace setiap test */
-  trace: 'retain-on-failure',
+    // Video jika gagal
+    video: 'retain-on-failure',
 
-  /* Ignore HTTPS */
-  ignoreHTTPSErrors: true,
+    // Trace otomatis jika gagal
+    trace: 'retain-on-failure',
 
-  /* Ukuran browser */
-  viewport: {
-    width: 1366,
-    height: 768,
+    // Ignore HTTPS
+    ignoreHTTPSErrors: true,
+
+    // Viewport
+    viewport: {
+      width: 1366,
+      height: 768,
+    },
+
+    // Action timeout
+    actionTimeout: 15000,
+
+    // Navigation timeout
+    navigationTimeout: 30000,
   },
-},
 
-  /* Browser yang digunakan */
+  // Browser
   projects: [
     {
       name: 'chromium',
@@ -74,28 +72,29 @@ use: {
     },
 
     /*
-    // Mobile Chrome
     {
-      name: 'Mobile Chrome',
+      name: 'firefox',
       use: {
-        ...devices['Pixel 7'],
+        ...devices['Desktop Firefox'],
       },
     },
 
-    // Mobile Safari
     {
-      name: 'Mobile Safari',
+      name: 'webkit',
       use: {
-        ...devices['iPhone 14'],
+        ...devices['Desktop Safari'],
       },
     },
     */
   ],
 
-  /* Jalankan Next.js otomatis sebelum testing */
-   webServer: {
-     command: 'npm run dev',
-     url: 'http://localhost:3000',
-     reuseExistingServer: !process.env.CI,
-   },
+  // Menjalankan Next.js otomatis
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://127.0.0.1:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  },
 });
